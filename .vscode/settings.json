@@ -1,0 +1,15 @@
+{
+  "files.associations": {
+    "qlowenergyservice": "cpp",
+    "qlowenergycontroller": "cpp",
+    "initializer_list": "cpp",
+    "type_traits": "cpp"
+  },
+  "makefile.launchConfigurations": [
+    {
+      "cwd": "/home/max/code/heartrate-game",
+      "binaryPath": "/home/max/code/heartrate-game/heartrate-game",
+      "binaryArgs": []
+    }
+  ]
+}
