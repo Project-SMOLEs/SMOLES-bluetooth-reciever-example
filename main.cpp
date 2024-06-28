@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
     DeviceFinder deviceFinder(&deviceHandler);
 
     qmlRegisterUncreatableType<DeviceHandler>("Shared", 1, 0, "AddressType", "Enum is not a type");
+    qmlRegisterUncreatableType<DeviceHandler>("Shared", 1, 0, "MessageFormat", "Enum is not a type");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("connectionHandler", &connectionHandler);

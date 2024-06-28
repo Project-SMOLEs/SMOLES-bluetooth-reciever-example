@@ -78,6 +78,7 @@ class DeviceHandler : public BluetoothBaseClass
     // Q_PROPERTY(int time READ time NOTIFY statsChanged)
     // Q_PROPERTY(float calories READ calories NOTIFY statsChanged)
     Q_PROPERTY(AddressType addressType READ addressType WRITE setAddressType)
+    Q_PROPERTY(MessageFormat messageFormat READ messageFormat WRITE setMessageFormat)
 
 public:
     enum class AddressType {
@@ -86,11 +87,20 @@ public:
     };
     Q_ENUM(AddressType)
 
+    enum class MessageFormat {
+        CSV,
+        JSON
+    };
+    Q_ENUM(MessageFormat)
+
     DeviceHandler(QObject *parent = nullptr);
 
     void setDevice(DeviceInfo *device);
     void setAddressType(AddressType type);
     AddressType addressType() const;
+
+    void setMessageFormat(MessageFormat message_format);
+    MessageFormat messageFormat() const;
 
     bool measuring() const;
     bool alive() const;
@@ -136,6 +146,7 @@ private:
 
     // QVector<int> m_measurements;
     QLowEnergyController::RemoteAddressType m_addressType = QLowEnergyController::PublicAddress;
+    MessageFormat m_messageFormat = MessageFormat::JSON;
 
     // File to storage the data
     std::ofstream file;

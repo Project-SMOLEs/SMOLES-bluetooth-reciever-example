@@ -88,6 +88,16 @@ DeviceHandler::AddressType DeviceHandler::addressType() const
     return DeviceHandler::AddressType::PublicAddress;
 }
 
+void DeviceHandler::setMessageFormat(MessageFormat message_format)
+{
+    m_messageFormat = message_format;
+}
+
+DeviceHandler::MessageFormat DeviceHandler::messageFormat() const
+{
+    return m_messageFormat;
+}
+
 void DeviceHandler::setDevice(DeviceInfo *device)
 {
     clearMessages();
@@ -147,7 +157,12 @@ void DeviceHandler::startMeasurement()
         m_measuring = true;
         first_measurement_expected = true;
         file.open("test.txt");
-        file << "{\n" << "\"SensorDataPackage\":[\n";
+
+        if (m_messageFormat == DeviceHandler::MessageFormat::JSON)
+        {
+            file << "{\n" << "\"SensorDataPackage\":[\n";
+        }
+        
         emit measuringChanged();
     }
 }
@@ -155,8 +170,11 @@ void DeviceHandler::startMeasurement()
 void DeviceHandler::stopMeasurement()
 {
     m_measuring = false;
-    // todo: remove last character because it is a comma
-    file << "]\n" << "}";
+
+    if (m_messageFormat == DeviceHandler::MessageFormat::JSON)
+    {
+        file << "]\n" << "}";
+    }
     file.close();
     emit measuringChanged();
 }
@@ -253,13 +271,13 @@ void DeviceHandler::updatePressureValue(const QLowEnergyCharacteristic &c, const
     std::string recieved_string = recieved_data.toStdString();
     addMeasurement(recieved_string);
 
-    setError("Start json parse");
-    smoles::InsoleSensorData sensor_data = nlohmann::json::parse(recieved_string);
-    setError("Json parse finished");
+    // setError("Start json parse");
+    // smoles::InsoleSensorData sensor_data = nlohmann::json::parse(recieved_string);
+    // setError("Json parse finished");
 
-    std::string output = "Timestamp " + std::to_string(sensor_data.get_time_stamp())
-      + ", Left foot " + std::to_string(sensor_data.get_left_foot());
-    setInfo(QString::fromStdString(output));
+    // std::string output = "Timestamp " + std::to_string(sensor_data.get_time_stamp())
+    //   + ", Left foot " + std::to_string(sensor_data.get_left_foot());
+    // setInfo(QString::fromStdString(output));
 }
 //! [Reading value]
 
@@ -307,7 +325,13 @@ void DeviceHandler::addMeasurement(const std::string &_measurement)
 {
     if (!first_measurement_expected)
     {
-        file << ",\n" + _measurement;
+        // check if message is in json format
+        // if it is in csv format, no comma is needed
+        if (m_messageFormat == DeviceHandler::MessageFormat::JSON)
+        {
+            file << ",";
+        }
+        file << "\n" + _measurement;
     }
     else
     {

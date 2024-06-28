@@ -241,4 +241,36 @@ GamePage {
             color: startButton.enabled ? GameSettings.textColor : GameSettings.disabledTextColor
         }
     }
+
+    GameButton {
+        id: messageFormatButton
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: startButton.top
+        anchors.bottomMargin: GameSettings.fieldMargin*0.5
+        width: circle.width
+        height: GameSettings.fieldHeight
+        enabled: !deviceHandler.measuring
+        state: "csv"
+        onClicked: state == "csv" ? state = "json" : state = "csv"
+
+        states: [
+            State {
+                name: "csv"
+                PropertyChanges { target: messageFormatText; text: qsTr("CSV Format") }
+                PropertyChanges { target: deviceHandler; messageFormat: MessageFormat.CSV }
+            },
+            State {
+                name: "json"
+                PropertyChanges { target: messageFormatText; text: qsTr("JSON Format") }
+                PropertyChanges { target: deviceHandler; messageFormat: MessageFormat.JSON }
+            }
+        ]
+
+        Text {
+            id: messageFormatText
+            anchors.centerIn: parent
+            font.pixelSize: GameSettings.tinyFontSize
+            color: GameSettings.textColor
+        }
+    }
 }
